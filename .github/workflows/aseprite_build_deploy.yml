@@ -23,8 +23,8 @@ jobs:
     - name: Get latest version info
       id: version_info
       run: |
-        data=$(curl -sL https://api.github.com/repos/aseprite/aseprite/releases/latest)
-        LATEST_TAG=$(echo "${data}" | jq -r '.tag_name')
+        data=$(curl -sL https://api.github.com/repos/aseprite/aseprite/releases)
+        LATEST_TAG=$(echo "${data}" | jq -r '[.[].tag_name|select(startswith("v1.3"))][0]')
         DOWNLOAD_URL=$(echo "${data}" | jq -r '.assets[].browser_download_url')
         VERSION_INFO=$(echo "${data}" | jq -r '.body')
 
