@@ -30,19 +30,21 @@ jobs:
         VERSION_INFO=$(echo "${data}" | jq -r '.body')
 
         echo "${LATEST_TAG}" > ${LATEST_TAG}.txt
-        echo "::set-output name=latest_tag::${LATEST_TAG}"
-        echo "::set-output name=download_url::${DOWNLOAD_URL}"
-        echo "::set-output name=version_info::${VERSION_INFO}"
+        echo "latest_tag=${LATEST_TAG}" >> $GITHUB_OUTPUT
+        echo "download_url=${DOWNLOAD_URL}" >> $GITHUB_OUTPUT
+        echo "version_info<<EOF" >> $GITHUB_OUTPUT
+        echo "$VERSION_INFO" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
     - name: Load version from cache
       id: version_check
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ${{ steps.version_info.outputs.latest_tag }}.txt
         key: cached_version
     - name: Should we start new build?
       id: should_build
       if: steps.version_check.outputs.cache-hit != 'true'
-      run: echo "::set-output name=should_build::true"
+      run: echo "should_build=true" >> $GITHUB_OUTPUT
 
   build-aseprite:
     name: Build Aseprite
@@ -57,7 +59,7 @@ jobs:
     steps:
       - name: (Windows) Install dependencies
         if: matrix.os == 'windows-latest'
-        uses: seanmiddleditch/gha-setup-ninja@v3
+        uses: seanmiddleditch/gha-setup-ninja@v4
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt install -y cmake ninja-build libxcursor-dev libxi-dev libgl1-mesa-dev
@@ -67,7 +69,7 @@ jobs:
 
       - name: Get Skia from cache
         id: skia-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: skia
           key: skia-m102-${{ matrix.os }}-cache
@@ -126,7 +128,7 @@ jobs:
         working-directory: aseprite/build/bin
         run: echo '# This file is here so Aseprite behaves as a portable program' > aseprite.ini
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Aseprite-${{ needs.check-version.outputs.latest_tag }}
           path: aseprite/build/bin/
