@@ -67,14 +67,14 @@ jobs:
         if: matrix.os == 'macOS-latest'
         run: brew install ninja p7zip
 
-      - name: Download Skia
-        if: contains(needs.check-version.outputs.latest_tag, 'beta') == false
-        run: |
-          curl -o Skia-${{ runner.os }}-Release-X64.zip -L https://github.com/aseprite/skia/releases/download/m102-861e4743af/Skia-${{ runner.os }}-Release-X64.zip
-          unzip Skia-${{ runner.os }}-Release-X64.zip -d skia
+      # - name: Download Skia
+      #   if: contains(needs.check-version.outputs.latest_tag, 'beta') == false
+      #   run: |
+      #     curl -o Skia-${{ runner.os }}-Release-X64.zip -L https://github.com/aseprite/skia/releases/download/m102-861e4743af/Skia-${{ runner.os }}-Release-X64.zip
+      #     unzip Skia-${{ runner.os }}-Release-X64.zip -d skia
 
-      - name: Download Skia for beta
-        if: contains(needs.check-version.outputs.latest_tag, 'beta')
+      - name: Download Skia
+        # if: contains(needs.check-version.outputs.latest_tag, 'beta')
         run: |
           curl -o Skia-${{ runner.os }}-Release-X64.zip -L https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-${{ runner.os }}-Release-X64.zip
           unzip Skia-${{ runner.os }}-Release-X64.zip -d skia
